@@ -1,0 +1,24 @@
+{
+  "name": "inrex",
+  "author": "James K Nelson <james@jamesknelson.com>",
+  "description": "A data store for Indexable Records, with Redux support.",
+  "version": "0.1.0",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build:commonjs": "tsc --pretty --module commonjs --outDir dist/commonjs",
+    "build:es": "tsc --pretty --module es2015 --outDir dist/es",
+    "build": "npm run build:es && npm run build:commonjs",
+    "build:watch": "npm run clean && npm run build:es -- --watch"
+  },
+  "main": "dist/commonjs/index.js",
+  "module": "dist/es/index.js",
+  "types": "src/index.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "rimraf": "^2.6.2",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "redux": "^3.7.2"
+  }
+}
