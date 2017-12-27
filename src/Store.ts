@@ -132,7 +132,9 @@ export class Store<S extends Schema=any> {
             return
         }
         if (--this.batchLevel === 0) {
-            for (let query of this.batchQueries.values()) {
+            let queries = Array.from(this.batchQueries.values())
+            for (let i = 0; i < queries.length; i++) {
+                let query = queries[i]
                 let callbacks = this.queries.get(query)
 
                 if (callbacks) {
@@ -146,7 +148,9 @@ export class Store<S extends Schema=any> {
 
     private handleStateChange = () => {
         this.setLatestWrapper()
-        for (let [query, callbacks] of this.queries.entries()) {
+        let queries = Array.from(this.queries.entries())
+        for (let i = 0; i < queries.length; i++) {
+            let [query, callbacks] = queries[i]
             if (query.canChangeAffectResult(this.latestWrapper)) {
                 if (this.batchLevel === 0) {
                     let result = query.select(this.latestWrapper, {})

@@ -165,8 +165,8 @@ export class StoreStateWrapper<S extends Schema=any> {
                 existingChanges.indexKeys.forEach(key => changedKeys[entityName].add(key))
                 if (changedIds[entityName].size || changedKeys[entityName].size) {
                     this.predictedDataState[entityName].changes = {
-                        recordIds: [...changedIds[entityName]],
-                        indexKeys: [...changedKeys[entityName]],
+                        recordIds: Array.from(changedIds[entityName]),
+                        indexKeys: Array.from(changedKeys[entityName]),
                     }
                 }
             }

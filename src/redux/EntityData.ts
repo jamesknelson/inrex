@@ -131,8 +131,8 @@ export namespace EntityData {
             records,
             indexes,
             changes: {
-                recordIds: [...changedIds],
-                indexKeys: [...changedKeys],
+                recordIds: Array.from(changedIds),
+                indexKeys: Array.from(changedKeys),
             },
         }
     }
