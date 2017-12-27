@@ -1,4 +1,4 @@
-import { Record } from './DataTypes'
+import { Data } from './Data'
 import { Entity } from './Schema'
 import { StoreStateWrapper } from './StoreStateWrapper'
 
@@ -14,7 +14,7 @@ export namespace Query {
     }[Q['type']]    
 
     export type Children<E extends Entity=any> = {
-        [childName: string]: Query<any, Record<E>, any>
+        [childName: string]: Query<any, Data.Record<E>, any>
     }
 }
 
@@ -44,7 +44,7 @@ export abstract class BaseQuery<E extends Entity, Variables, Children extends Qu
 
     protected createRecordResult(
         storeState: StoreStateWrapper,
-        record: Record<E>
+        record: Data.Record<E>
     ): RecordQuery.Result<E, Children> {
         let children = {} as { [ChildName in keyof Children]: Query.Result<Children[ChildName]> }
         for (let i = 0; i < this.childNames.length; i++) {
@@ -91,7 +91,7 @@ export abstract class RecordQuery<E extends Entity, Variables, Children extends 
 
 export namespace RecordQuery {
     export interface Result<E extends Entity=any, Children extends Query.Children<E>={}> {
-        data: Record<E>,
+        data: Data.Record<E>,
         children: {
             [ChildName in keyof Children]: Query.Result<Children[ChildName]>;
         },

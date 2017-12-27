@@ -1,4 +1,4 @@
-import { Record } from '../DataTypes'
+import { Data } from '../Data'
 import { Entity } from '../Schema'
 import { EntityData } from '../redux/EntityData'
 import { Query, RecordQuery } from '../Query'
@@ -17,7 +17,7 @@ export class IdQuery<E extends Entity=any, Variables={}, Children extends Query.
         let id = this.getId(variables)
         let entityState: EntityData.State<E> = state[this.entity.name]
         let record = entityState.records[id]
-        return this.createRecordResult(state, record || { id })
+        return this.createRecordResult(state, record || { id } as Data.Record<E>)
     }
   
     canChangeAffectResult(state: StoreStateWrapper, variables?: Variables): boolean {

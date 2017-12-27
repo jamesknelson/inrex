@@ -1,4 +1,4 @@
-import { createEntity, Attributes, SubscriptionManager } from '../src/index'
+import { createEntity, Attributes, Store, Data } from '../src/index'
 
 //---
 //EXAMPLE
@@ -25,10 +25,12 @@ export const Schema = {
     User,
 }
 
-const manager = new SubscriptionManager(Schema)
+const manager = new Store(Schema)
 
 let result = manager.execute(User.id('currentUserId', {
     account: Account.id(user => user.accountId)
 }))
 
-
+let record: Data.Record<typeof User> = {
+    id: 'test',
+}

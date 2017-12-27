@@ -1,4 +1,3 @@
-import { Record } from '../DataTypes'
 import { EntityData } from '../redux/EntityData'
 import { Query, ListQuery } from '../Query'
 import { Entity } from '../Schema'

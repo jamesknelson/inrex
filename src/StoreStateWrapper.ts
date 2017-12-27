@@ -1,13 +1,12 @@
-import { Index, Record } from './DataTypes'
 import { Entity, Schema } from './Schema'
 import { EntityData } from './redux/EntityData'
-import { Store } from './redux/Store'
+import { State } from './redux'
 
 
 export class StoreStateWrapper<S extends Schema=any> {
-    private currentStoreState: Store.State<S>
+    private currentStoreState: State<S>
 
-    private predictedDataState: Store.State<S>["data"]
+    private predictedDataState: State<S>["data"]
 
     private specialRecordStatuses: {
         [EntityName in keyof S]: {
@@ -26,7 +25,7 @@ export class StoreStateWrapper<S extends Schema=any> {
         }
     }
 
-    constructor(currentStoreState: Store.State<S>) {
+    constructor(currentStoreState: State<S>) {
         this.currentStoreState = currentStoreState
 
 
@@ -201,7 +200,7 @@ export class StoreStateWrapper<S extends Schema=any> {
     }
 
     // Adds record projections
-    getPredictedDataState(): Store.State<S>["data"] {
+    getPredictedDataState(): State<S>["data"] {
         return this.predictedDataState
     }
 }

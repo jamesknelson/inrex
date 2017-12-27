@@ -1,11 +1,11 @@
-import { Index, Record } from '../DataTypes'
+import { Data } from '../Data'
 import { Entity } from '../Schema'
 
 
 export namespace EntityData {
     export interface State<E extends Entity=any> {
-        records: { [id: string]: Record<E> };
-        indexes: { [key: string]: Index<E> };
+        records: { [id: string]: Data.Record<E> };
+        indexes: { [key: string]: Data.Index<E> };
 
         changes: null | {
             recordIds: string[],
@@ -22,11 +22,11 @@ export namespace EntityData {
     export type Update<E extends Entity=any> =
         {
             type: 'replaceRecords',
-            records: { [id: string]: Record<E> },
+            records: { [id: string]: Data.Record<E> },
         } |
         {
             type: 'replaceIndexes',
-            indexes: { [key: string]: Index<E> },
+            indexes: { [key: string]: Data.Index<E> },
         } |
         {
             type: 'addRecordIdToIndexes',

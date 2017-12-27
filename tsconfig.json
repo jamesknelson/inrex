@@ -1,13 +1,12 @@
 {
     "compilerOptions": {
-        "jsx": "preserve",
         "module": "es2015",
         "moduleResolution": "node",
         "outDir": "dist/es",
-        "removeComments": true,
+        "removeComments": false,
         "sourceMap": true,
         "strictNullChecks": true,
-        "target": "es2015",
+        "target": "es5",
         "lib": [
             "es5",
             "es6",
@@ -18,8 +17,8 @@
         ]
     },
     "exclude": [
-        "dist",
         "examples",
+        "dist",
         "node_modules"
     ]
 }

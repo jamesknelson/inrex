@@ -1,4 +1,4 @@
-import { Record } from './DataTypes'
+import { Data } from './Data'
 import { Query } from './Query'
 
 import { AvailableQuery } from './queries/AvailableQuery'
@@ -109,27 +109,27 @@ export class Entity<Attributes extends { [name: string]: Attribute }=any> {
     // Query helpers
     //
 
-    available<E extends Entity<any>>(): AvailableQuery<this, Record<E>, {}>;
-    available<E extends Entity<any>, Children extends Query.Children<this>>(children: Children): AvailableQuery<this, Record<E>, Children>;
-    available<E extends Entity<any>, Children extends Query.Children<this>={}>(children?: Children): AvailableQuery<this, Record<E>, Children> {
+    available<E extends Entity<any>>(): AvailableQuery<this, Data.Record<E>, {}>;
+    available<E extends Entity<any>, Children extends Query.Children<this>>(children: Children): AvailableQuery<this, Data.Record<E>, Children>;
+    available<E extends Entity<any>, Children extends Query.Children<this>={}>(children?: Children): AvailableQuery<this, Data.Record<E>, Children> {
         return new AvailableQuery({ entity: this, children })
     }
 
-    id<E extends Entity<any>>(id: string | ((record: Record<E>) => string)): IdQuery<this, Record<E>, {}>;
-    id<E extends Entity<any>, Children extends Query.Children<this>>(id: string | ((record: Record<E>) => string), children: Children): IdQuery<this, Record<E>, Children>;
-    id<E extends Entity<any>, Children extends Query.Children<this>={}>(id: string | ((record: Record<E>) => string), children?: Children): IdQuery<this, Record<E>, Children> {
+    id<E extends Entity<any>>(id: string | ((record: Data.Record<E>) => string)): IdQuery<this, Data.Record<E>, {}>;
+    id<E extends Entity<any>, Children extends Query.Children<this>>(id: string | ((record: Data.Record<E>) => string), children: Children): IdQuery<this, Data.Record<E>, Children>;
+    id<E extends Entity<any>, Children extends Query.Children<this>={}>(id: string | ((record: Data.Record<E>) => string), children?: Children): IdQuery<this, Data.Record<E>, Children> {
         return new IdQuery({ entity: this, children, id })
     }
 
-    ids<E extends Entity<any>>(ids: string[] | ((record: Record<E>) => string[])): IdListQuery<this, Record<E>, {}>;
-    ids<E extends Entity<any>, Children extends Query.Children<this>>(ids: string[] | ((record: Record<E>) => string[]), children: Children): IdListQuery<this, Record<E>, Children>;
-    ids<E extends Entity<any>, Children extends Query.Children<this>={}>(ids: string[] | ((record: Record<E>) => string[]), children?: Children): IdListQuery<this, Record<E>, Children> {
+    ids<E extends Entity<any>>(ids: string[] | ((record: Data.Record<E>) => string[])): IdListQuery<this, Data.Record<E>, {}>;
+    ids<E extends Entity<any>, Children extends Query.Children<this>>(ids: string[] | ((record: Data.Record<E>) => string[]), children: Children): IdListQuery<this, Data.Record<E>, Children>;
+    ids<E extends Entity<any>, Children extends Query.Children<this>={}>(ids: string[] | ((record: Data.Record<E>) => string[]), children?: Children): IdListQuery<this, Data.Record<E>, Children> {
         return new IdListQuery({ entity: this, children, ids })
     }
 
-    index<E extends Entity<any>>(key: string | ((record: Record<E>) => string)): IndexQuery<this, Record<E>, {}>;
-    index<E extends Entity<any>, Children extends Query.Children<this>>(key: string | ((record: Record<E>) => string), children: Children): IndexQuery<this, Record<E>, Children>;
-    index<E extends Entity<any>, Children extends Query.Children<this>={}>(key: string | ((record: Record<E>) => string), children?: Children): IndexQuery<this, Record<E>, Children> {
+    index<E extends Entity<any>>(key: string | ((record: Data.Record<E>) => string)): IndexQuery<this, Data.Record<E>, {}>;
+    index<E extends Entity<any>, Children extends Query.Children<this>>(key: string | ((record: Data.Record<E>) => string), children: Children): IndexQuery<this, Data.Record<E>, Children>;
+    index<E extends Entity<any>, Children extends Query.Children<this>={}>(key: string | ((record: Data.Record<E>) => string), children?: Children): IndexQuery<this, Data.Record<E>, Children> {
         return new IndexQuery({ entity: this, children, key })
     }
 }
@@ -148,7 +148,7 @@ export function createEntity<
         let name = attributeNames[i]
         let attributeOptions = options.attributes[name]
 
-        if (attributeOptions) {
+        if (attributeOptions['name']) {
             throw new Error(`The "name" property on an Attribute object is reserved.`)
         }
 

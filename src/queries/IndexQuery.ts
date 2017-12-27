@@ -1,4 +1,4 @@
-import { Record } from '../DataTypes'
+import { Data } from '../Data'
 import { Entity } from '../Schema'
 import { EntityData } from '../redux/EntityData'
 import { Query, ListQuery } from '../Query'
@@ -28,7 +28,7 @@ export class IndexQuery<E extends Entity=any, Variables={}, Children extends Que
         return {
             results: index.ids.map(id => {
                 let record = entityState.records[id]
-                return this.createRecordResult(state, record || { id })
+                return this.createRecordResult(state, record || { id } as Data.Record<E>)
             }),
             ...state.getIndexStatus(this.entity.name, key)
         }

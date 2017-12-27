@@ -1,4 +1,4 @@
-import { Index, Record } from '../DataTypes'
+import { Data } from '../Data'
 import { EntityData } from './EntityData'
 import { Schema } from '../Schema'
 
@@ -63,7 +63,7 @@ export namespace SchemaData {
 
         replaceRecords<EntityName extends keyof S>(
             entityName: EntityName,
-            records: { [id: string]: Record<S[EntityName]> }
+            records: { [id: string]: Data.Record<S[EntityName]> }
         ) {
             this.addAction(entityName, {
                 type: 'replaceRecords',
@@ -73,7 +73,7 @@ export namespace SchemaData {
 
         replaceIndexes<EntityName extends keyof S>(
             entityName: EntityName,
-            indexes: { [key: string]: Index<S[EntityName]> }
+            indexes: { [key: string]: Data.Index<S[EntityName]> }
         ) {
             this.addAction(entityName, {
                 type: 'replaceIndexes',

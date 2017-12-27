@@ -1,17 +1,16 @@
 import { createStore } from 'redux'
-import { Index, Record } from './DataTypes'
 import { Query } from './Query'
 import { Entity, Schema } from './Schema'
 import { SchemaData } from './redux/SchemaData'
 import { SchemaPredictions } from './redux/SchemaPredictions'
-import { Store } from './redux/Store'
+import { State, Action, createReducer, createEmptyState } from './redux'
 import { StoreStateWrapper } from './StoreStateWrapper'
 
 
-export class SubscriptionManager<S extends Schema=any> {
+export class Store<S extends Schema=any> {
     private schema: S
     private reduxStore: any
-    private selector: (storeState: any) => Store.State<S>
+    private selector: (storeState: any) => State<S>
     private queries = new Map<Query, Function[]>()
 
     private latestWrapper: StoreStateWrapper<S>
@@ -21,13 +20,13 @@ export class SubscriptionManager<S extends Schema=any> {
     private batchLevel = 0
     private batchQueries = new Set<Query>()
 
-    constructor(schema: S, reduxStore?: any, selector?: (storeState: any) => Store.State<S>) {
+    constructor(schema: S, reduxStore?: any, selector?: (storeState: any) => State<S>) {
         this.schema = schema
 
         this.reduxStore = reduxStore
         if (!reduxStore) {
-            let reducer = Store.createReducer(schema)
-            let emptyState = Store.createEmptyState(schema)
+            let reducer = createReducer(schema)
+            let emptyState = createEmptyState(schema)
             let enhancer =
                 typeof window !== 'undefined' &&
                 (<any>window).__REDUX_DEVTOOLS_EXTENSION__ &&
@@ -39,6 +38,17 @@ export class SubscriptionManager<S extends Schema=any> {
         this.setLatestWrapper()
         
         this.reduxStore.subscribe(this.handleStateChange)
+    }
+
+    reset() {
+        this.startBatch()
+        this.reduxStore.dispatch({
+            type: 'SchemaPredictions.Reset',
+        })
+        this.update(a => {
+            Object.keys(this.schema).forEach(entityName => a.reset(entityName))
+        })
+        this.flushBatch()
     }
 
     subscribe<Q extends Query<any, {}, any>>(query: Q, callback: (result: Query.Result<Q>) => void): Unsubscriber {
@@ -105,11 +115,11 @@ export class SubscriptionManager<S extends Schema=any> {
         this.reduxStore.dispatch(reduxAction)
     }
 
-    getDataState(): Store.State<S>["data"] {
+    getDataState(): State<S>["data"] {
         return this.latestWrapper.getPredictedDataState()
     }
 
-    getKnownDataState(): Store.State<S>["data"] {
+    getKnownDataState(): State<S>["data"] {
         return this.selector(this.reduxStore.getState()).data
     }
 
@@ -118,6 +128,9 @@ export class SubscriptionManager<S extends Schema=any> {
     }
 
     flushBatch(): void {
+        if (this.batchLevel === 0) {
+            return
+        }
         if (--this.batchLevel === 0) {
             for (let query of this.batchQueries.values()) {
                 let callbacks = this.queries.get(query)

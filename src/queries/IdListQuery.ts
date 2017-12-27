@@ -1,4 +1,4 @@
-import { Record } from '../DataTypes'
+import { Data } from '../Data'
 import { Entity } from '../Schema'
 import { EntityData } from '../redux/EntityData'
 import { Query, ListQuery } from '../Query'
@@ -20,7 +20,7 @@ export class IdListQuery<E extends Entity=any, Variables={}, Children extends Qu
         return {
             results: ids.map(id => {
                 let record = entityState.records[id]
-                return this.createRecordResult(state, record || { id })
+                return this.createRecordResult(state, record || { id } as Data.Record<E>)
             }),
             status: 'fresh',
         }

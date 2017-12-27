@@ -1,11 +1,11 @@
-import { Index, Record } from '../DataTypes'
+import { Data } from '../Data'
 import { Entity, Schema } from '../Schema'
 
 
 export namespace SchemaPredictions {
     export type EntityPrediction<E extends Entity=any> =
         { type: 'recordWillBeReplaced', id: string } | 
-        { type: 'recordWillBeReplacedWith', id: string, record: Record<E> } |
+        { type: 'recordWillBeReplacedWith', id: string, record: Data.Record<E> } |
         { type: 'indexWillBeReplaced', key: string } | 
         { type: 'recordIdWillBeAddedToIndexes', id: string, keyPattern: string | RegExp } |
         { type: 'recordIdWillBeRemovedFromIndexes', id: string, keyPattern: string | RegExp } |
@@ -40,6 +40,9 @@ export namespace SchemaPredictions {
                 id: number,
                 error: any,
             },
+        } |
+        {
+            type: 'SchemaPredictions.Reset',
         }
     
     export type Reducer<S extends Schema=any> = (state: State<S>, action: Action<S>) => State<S>;
@@ -72,6 +75,9 @@ export namespace SchemaPredictions {
                         return newState
                     }
                     return state
+                
+                case 'SchemaPredictions.Reset':
+                    return []
                     
                 default:
                     return state
@@ -97,7 +103,7 @@ export namespace SchemaPredictions {
             })
         }
 
-        recordWillBeReplacedWith<EntityName extends keyof S>(entityName: EntityName, record: Record<S[EntityName]>) {
+        recordWillBeReplacedWith<EntityName extends keyof S>(entityName: EntityName, record: Data.Record<S[EntityName]>) {
             this.addPrediction(entityName, {
                 type: 'recordWillBeReplacedWith',
                 id: record.id,
