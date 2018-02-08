@@ -15,13 +15,13 @@ export class IdQuery<E extends Entity=any, Variables={}, Children extends Query.
   
     select(state: StoreStateWrapper, variables: Variables): RecordQuery.Result<E, Children> {
         let id = this.getId(variables)
-        let entityState: EntityData.State<E> = state[this.entity.name]
+        let entityState: EntityData.State<E> = state.getPredictedDataState()[this.entity.name]
         let record = entityState.records[id]
         return this.createRecordResult(state, record || { id } as Data.Record<E>)
     }
   
     canChangeAffectResult(state: StoreStateWrapper, variables?: Variables): boolean {
-        let entityChanges = state[this.entity.name].changes
+        let entityChanges = state.getPredictedDataState()[this.entity.name].changes
 
         if (!entityChanges) {
             return false

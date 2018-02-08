@@ -174,7 +174,8 @@ export class StoreStateWrapper<S extends Schema=any> {
     }
 
     getRecordStatus(entityName: keyof S, id: string): { status: StoreStateWrapper.RecordStatus, error?: any } {
-        let specialStatus = this.specialRecordStatuses[entityName][id]
+        let entityRecordStatuses = this.specialRecordStatuses[entityName]
+        let specialStatus = entityRecordStatuses && entityRecordStatuses[id]
         if (specialStatus) {
             return specialStatus
         }

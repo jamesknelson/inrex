@@ -1,4 +1,5 @@
 import { createStore } from 'redux'
+import { OutletSubject, Outlet } from 'outlets'
 import { Query } from './Query'
 import { Entity, Schema } from './Schema'
 import { SchemaData } from './redux/SchemaData'
@@ -11,7 +12,7 @@ export class Store<S extends Schema=any> {
     private schema: S
     private reduxStore: any
     private selector: (storeState: any) => State<S>
-    private queries = new Map<Query, Function[]>()
+    private subjects = new Map<Query, OutletSubject<Query.Result<Query>>>()
 
     private latestWrapper: StoreStateWrapper<S>
 
@@ -51,20 +52,13 @@ export class Store<S extends Schema=any> {
         this.flushBatch()
     }
 
-    subscribe<Q extends Query<any, {}, any>>(query: Q, callback: (result: Query.Result<Q>) => void): Unsubscriber {
-        let callbacks = this.queries.get(query) as Function[]
-        if (!callbacks) {
-            callbacks = []
-            this.queries.set(query, [])
+    subscribe<Q extends Query<any, {}, any>>(query: Q): Outlet<Query.Result<Q>> {
+        let subject = this.subjects.get(query) as OutletSubject<Query.Result<Q>>
+        if (!subject) {
+            subject = new OutletSubject(this.execute(query))
+            this.subjects.set(query, subject)
         }
-        callbacks.push(callback)
-
-        return () => {
-            let callbackIndex = callbacks.indexOf(callback)
-            if (callbackIndex !== -1) {
-                callbacks.splice(callbackIndex, 1)
-            }
-        }
+        return new Outlet(subject)
     }
 
     execute<Q extends Query>(query: Q): Query.Result<Q> {
@@ -128,6 +122,8 @@ export class Store<S extends Schema=any> {
     }
 
     flushBatch(): void {
+        // NOTE: Could implement this as a BatchedOutletSubject instead...
+        //       But that doesn't exist yet.
         if (this.batchLevel === 0) {
             return
         }
@@ -135,11 +131,9 @@ export class Store<S extends Schema=any> {
             let queries = Array.from(this.batchQueries.values())
             for (let i = 0; i < queries.length; i++) {
                 let query = queries[i]
-                let callbacks = this.queries.get(query)
-
-                if (callbacks) {
-                    let result = query.select(this.latestWrapper, {})
-                    callbacks.forEach(callback => callback(result))
+                let subject = this.subjects.get(query)
+                if (subject) {
+                    subject.next(query.select(this.latestWrapper, {}))
                 }
             }
             this.batchQueries.clear()
@@ -148,13 +142,12 @@ export class Store<S extends Schema=any> {
 
     private handleStateChange = () => {
         this.setLatestWrapper()
-        let queries = Array.from(this.queries.entries())
-        for (let i = 0; i < queries.length; i++) {
-            let [query, callbacks] = queries[i]
+        let subjects = Array.from(this.subjects.entries())
+        for (let i = 0; i < subjects.length; i++) {
+            let [query, subject] = subjects[i]
             if (query.canChangeAffectResult(this.latestWrapper)) {
                 if (this.batchLevel === 0) {
-                    let result = query.select(this.latestWrapper, {})
-                    callbacks.forEach(callback => callback(result))
+                    subject.next(query.select(this.latestWrapper, {}))
                 }
                 else {
                     this.batchQueries.add(query)
