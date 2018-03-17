@@ -1,7 +1,7 @@
-import { Entity } from './Schema'
+import { Attribute, Entity } from './Schema'
 
 export namespace Data {
-    export type Record<E extends Entity=any> = {
+    export type Record<E extends Entity<{ [name: string]: Attribute }>=any> = {
         id: string,
 
         // On two records with the same id, the record with the higher serial
